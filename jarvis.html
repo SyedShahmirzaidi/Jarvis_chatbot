@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chatbot with Password, Joke, Voice and Q&A Generators</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <h2>Edit Chatbot</h2>
+        <label>
+          <input type="checkbox" id="password-generator" onchange="togglePasswordGenerator()">
+          <span class="label-text">
+            Add Password Generator
+            <span class="free-label">Free</span>
+          </span>
+          </label>
+          <input type="checkbox" id="joke-generator" onchange="toggleJokeGenerator()">
+          <span class="label-text">
+            Add joke Generator
+            <span class="free-label">Free</span>
+          </span>
+          </label>
+        <label>
+          <input type="checkbox" id="voice-generator" onchange="toggleVoiceBtn()">
+          <span class="label-text">
+            Add AI talk Generator
+            <span class="free-label">Paid</span>
+          </span>
+          </label>
+          <label>
+          <input type="checkbox" id="qa-generator" onchange="toggleQAGenerator()">
+          Add Q&A Generator
+          <span class="free-label">Free</span>
+        </span>
+        </label>
+        <label>
+          <input type="checkbox" id="add-emoji">
+          Add Emoji
+          <span class="free-label">Paid</span>
+          </span>
+          </label>
+          <label>
+            <input type="checkbox" id="play-game" onchange="toggleGame()">
+            <span class="label-text">
+              Play Game
+              <span class="free-label">Free</span>
+            </span>
+          </label>
+      </div>
+      <div class="main">
+        <div class="conversation"></div>
+        <div class="input">
+          <input type="text" id="input" placeholder="Type your message...">
+          <input type="text" id="output" placeholder="Chatbot response will appear here" readonly>
+          <button id="voice-btn" style="display: none;">Record Voice Message</button>
+          <button id="emoji-button" style="display:none;">😀</button>
+        </div>
+      </div>
+    </div>
+    <div class="popup" style="display:none;">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3>Choose an Emoji</h3>
+          <button id="close-button">X</button>
+        </div>
+        <div class="popup-body">
+          <button class="emoji" data-emoji="&#128512;">&#128512;</button>
+          <button class="emoji" data-emoji="&#128514;">&#128514;</button>
+          <button class="emoji" data-emoji="&#128525;">&#128525;</button>
+          <button class="emoji" data-emoji="&#129300;">&#129300;</button>
+          <button class="emoji" data-emoji="&#128580;">&#128580;</button>
+          <button class="emoji" data-emoji="&#128526;">&#128526;</button>
+          <button class="emoji" data-emoji="&#129327;">&#129327;</button>
+        </div>
+      </div>
+    </div>
+    
+  
+    <style>
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+      
+      .sidebar {
+  display: flex; /* add this line to enable flexbox */
+  flex-direction: column; /* set flex direction to column */
+  justify-content: flex-start; /* align items to the top of the column */
+  align-items: flex-start; /* align items to the left of the column */
+  flex: 1;
+  background-color: #eee;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+      
+      .sidebar h2 {
+        margin-top: 0;
+      }
+      
+      .main {
+        flex: 3;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .conversation {
+        height: 80%;
+        overflow-y: scroll;
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .input {
+        display: flex;
+        align-items: center;
+      }
+      
+      .input input[type="text"] {
+        flex: 1;
+        margin-right: 10px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .input input[type="text"]:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 8px 0 #4CAF50;
+      }
+      
+      #output {
+        width: 50%;
+        background-color: #eee;
+      }
+      
+      .bot {
+        color: #555;
+      }
+      
+      .user {
+        color: #007bff;
+      }
+      #emoji-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  position: relative;
+  min-width: 200px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.popup-header h3 {
+  margin-top: 0;
+}
+
+.popup-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.emoji {
+  font-size: 24px;
+  padding: 5px 10px;
+  margin: 5px;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.emoji:hover {
+  background-color: #eee;
+}
+.edit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.edit i {
+  color: #555;
+  cursor: pointer;
+}
+.label-text {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.free-label {
+  background: linear-gradient(90deg, #17C3B2, #FF6B6B, #FFC107, #17C3B2);
+  background-size: 400% 400%;
+  animation: wave 2s linear infinite;
+  color: white;
+  padding: 2px 5px;
+  margin-left: 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+@keyframes wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+      </style>
+      <script>
+   // Chatbot
+   const conversation = document.querySelector(".conversation");
+   const input = document.getElementById("input");
+   const output = document.getElementById("output");
+   const voiceBtn = document.getElementById("voice-btn");
+   const addEmoji = document.querySelector('#add-emoji');
+const emojiButton = document.querySelector('#emoji-button');
+const popup = document.querySelector('.popup');
+const closeButton = document.querySelector('#close-button');
+const emojiList = document.querySelectorAll('.emoji');
+
+   let passwordGeneratorEnabled = false;
+   let jokeGeneratorEnabled = false;
+   let voiceGeneratorEnabled = false;
+   let isEmojiOpen = false;
+
+   function toggleVoiceBtn() {
+     voiceGeneratorEnabled = document.getElementById("voice-generator").checked;
+     voiceBtn.style.display = voiceGeneratorEnabled ? "block" : "none";
+   }
+   function toggleEmoji() {
+  if (isEmojiOpen) {
+    popup.style.display = 'none';
+    isEmojiOpen = false;
+  } else {
+    popup.style.display = 'block';
+    isEmojiOpen = true;
+  }
+}
+
+function closePopup() {
+  popup.style.display = 'none';
+  isEmojiOpen = false;
+}
+input.addEventListener("keyup", function(event) {
+     if (event.keyCode === 13) {
+       event.preventDefault();
+       const message = input.value;
+   
+   
+   input.value = "";
+   if (message.trim()) {
+     const userMessage = document.createElement("div");
+     userMessage.className = "user message";
+     userMessage.textContent = message;
+     conversation.appendChild(userMessage);
+     output.value = "Chatbot is typing...";
+     setTimeout(() => {
+       let botMessage;
+       if (passwordGeneratorEnabled && message.toLowerCase().includes("password")) {
+         botMessage = "Your new password is: " + generatePassword();
+       } else if (jokeGeneratorEnabled && message.toLowerCase().includes("joke")) {
+        botMessage = "joke is: " + 
+        generateJoke()
+       } else {
+         botMessage = generateResponse(message);
+       }
+       const botResponse = document.createElement("div");
+       botResponse.className = "bot message";
+       botResponse.textContent = botMessage;
+       conversation.appendChild(botResponse);
+       if (voiceGeneratorEnabled) {
+         generateVoiceMessage(botMessage);
+       }
+       output.value = "";
+     }, 1000);
+   }
+   }});
+   
+   
+   function generateResponse(message) {
+  // Custom Q&A responses
+  const qa = {
+    "becase of your joke": "ok",
+    "&#128512;": "Why you are happy",
+    "What is your name?": "My name is MYChat.",
+    "How old are you?": "I'm an AI language model, so I don't have an age.",
+    "What is the meaning of life?": "That's a philosophical question that has puzzled many for centuries.",
+    "What is the capital of France?": "The capital of France is Paris.",
+    // Add more Q&A pairs here
+  };
+  
+  // Check if message is a question in the Q&A dictionary
+  if (message in qa) {
+    return qa[message];
+  }
+  
+  // Random responses
+  const responses = [
+    "I'm not sure what you mean. Can you please rephrase your question?",
+    "Sorry, I didn't understand that.",
+    "I'm afraid I cannot answer that question.",
+    "I'm sorry, I'm not able to help you with that.",
+    "I'm not programmed to answer that question.",
+    "I'm sorry, I don't have an answer to that question.",
+    "I'm sorry, I'm not sure I understand what you're asking.",
+    "I don't know the answer to that. Would you like me to look it up for you?",
+    "I'm sorry, I don't have enough information to provide an answer.",
+    "I'm not sure, but I'll do my best to find an answer for you."
+  ];
+  const index = Math.floor(Math.random() * responses.length);
+  return responses[index];
+}
+   function generatePassword() {
+   // You can customize this function to generate passwords with different criteria
+   const length = 8;
+   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   let password = "";
+   for (let i = 0, n = charset.length; i < length; ++i) {
+   password += charset.charAt(Math.floor(Math.random() * n));
+   }
+   return password;
+   }
+   
+// Joke Generator
+function generateJoke() {
+const jokes = [
+"Why don't scientists trust atoms? Because they make up everything.",
+"I told my wife she was drawing her eyebrows too high. She looked surprised.",
+"I'm reading a book about anti-gravity. It's impossible to put down.",
+"What do you call a fake noodle? An impasta.",
+"Did you hear about the kidnapping at the playground? They woke up.",
+"I used to play piano by ear, but now I use my hands.",
+"I'm reading a book on the history of glue. I just can't seem to put it down.",
+"I'm trying to organize a hide and seek competition, but it's really hard to find good players.",
+"Why did the chicken cross the playground? To get to the other slide.",
+"Why did the tomato turn red? Because it saw the salad dressing.",
+];
+return jokes[Math.floor(Math.random() * jokes.length)];
+}
+function addEmojiToInput(event) {
+  const emoji = event.target.getAttribute('data-emoji');
+  input.value += emoji;
+}
+
+addEmoji.addEventListener('change', () => {
+  if (addEmoji.checked) {
+    const password = prompt("Please enter the password to add emoji button.");
+      if (password === "shahmir789465") {
+    emojiButton.style.display = 'block';
+  }} else {
+    emojiButton.style.display = 'none';
+    popup.style.display = 'none';
+    isEmojiOpen = false;
+  }
+});
+
+
+
+
+   
+   function generateVoiceMessage(text) {
+   const synth = window.speechSynthesis;
+   const voice = synth.getVoices()[0];
+   const utterance = new SpeechSynthesisUtterance(text);
+   utterance.voice = voice;
+   synth.speak(utterance);
+   }
+   
+   // Password generator
+   const passwordGenerator = document.getElementById("password-generator");
+   passwordGenerator.addEventListener("change", function() {
+   passwordGeneratorEnabled = this.checked;
+   });
+   
+   // Joke generator
+   const jokeGenerator = document.getElementById("joke-generator");
+   jokeGenerator.addEventListener("change", function() {
+   jokeGeneratorEnabled = this.checked;
+   });
+   
+   // Voice generator
+   const voiceGenerator = document.getElementById("voice-generator");
+   voiceGenerator.addEventListener("change", function() {
+    const password = prompt("Please enter the password to add speak AI button.");
+      if (password === "shahmir789465") {
+   toggleVoiceBtn();
+   }});
+   
+   voiceBtn.addEventListener("click", function() { 
+   const message = output.value;
+   if (message) {
+   generateVoiceMessage(message);
+   }
+   });
+  
+    emojiButton.addEventListener('click', toggleEmoji);
+    
+closeButton.addEventListener('click', closePopup);
+emojiList.forEach((emoji) => {
+  emoji.addEventListener('click', addEmojiToInput);
+});
+
+
+addEmojiButton.addEventListener("click", () => {
+      const password = prompt("Please enter the password to edit this question and answer.");
+      if (password === "shahmir789465") {
+        addEmoji.addEventListener('change', () => {
+  if (addEmoji.checked) {
+    emojiButton.style.display = 'block';
+  } else {
+    emojiButton.style.display = 'none';
+    popup.style.display = 'none';
+    isEmojiOpen = false;
+  }
+});
+      } else {
+        alert("Incorrect password. Please try again.");
+      }
+    });
+   
+   </script>
